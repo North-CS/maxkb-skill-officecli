@@ -42,9 +42,14 @@ def main(user_file: list):
         if relative_url.startswith("./"):
             relative_url = relative_url[2:]
 
-        # 下载文件
+        # 下载文件（新版本服务端要求携带认证请求头）
+        api_key = env.get("API_KEY")
+        if api_key:
+            headers = {"Authorization": f"Bearer {api_key}"}
+        else:
+            headers = {}
         download_url = f"{clean_base_url}/{relative_url.lstrip('/')}"
-        response = requests.get(download_url)
+        response = requests.get(download_url, headers=headers)
         response.raise_for_status()  # 检查请求是否成功
 
         # 保存文件，保留原文件名
